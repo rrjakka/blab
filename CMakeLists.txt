@@ -8,6 +8,10 @@ add_executable(
         src/main.c
         include/lexer.h
         src/lexer.c
+        src/token.c
+        include/token.h
+        src/parser.c
+        include/parser.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
