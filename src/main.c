@@ -15,9 +15,12 @@ int main()
 
     printf("%s = %Lf\n", source, ast_node_evaluate(ast));
 
+    // TODO: надо б сделать заебатый контекст
+
     ast_node_free(ast);
     lexer_free(lexer);
     parser_free(parser);
+
 
     printf("finnish!");
 

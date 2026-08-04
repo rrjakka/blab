@@ -22,5 +22,9 @@ void ast_node_free(ast_node_t* node)
         case AST_NODE_BINARY:
             binary_op_node_free(node->node.binary_op);
             break;
+        case AST_NODE_LITERAL:
+            break;
     }
+
+    free(node);
 }
