@@ -7,7 +7,7 @@
 
 int main()
 {
-    const auto source = "2 + 2 * 2";
+    const auto source = "(2 + 2) * 2";
 
     lexer_t* lexer = lexer_new(source, strlen(source));
     parser_t* parser = parser_new(lexer);

@@ -51,6 +51,12 @@ token_t lexer_next_token(lexer_t* lexer)
         case '-': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_MINUS };
         case '*': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_ASTERISK };
         case '/': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_SLASH };
+        case '(': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LPAREN };
+        case ')': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_RPAREN };
+        case '{': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LBRACE };
+        case '}': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_RBRACE };
+        case '[': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LBRACKET };
+        case ']': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_RBRACKET };
         default:
             fprintf(stderr, "Unknown character: '%c'\n", current_char);
             exit(EXIT_FAILURE);

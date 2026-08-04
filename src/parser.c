@@ -79,6 +79,11 @@ ast_node_t* parser_parse_factor(parser_t* parser)
         case TOKEN_TYPE_NUMBER:
             node = literal_node_new(parser_eat(parser, TOKEN_TYPE_NUMBER).value.as_number);
             break;
+        case TOKEN_TYPE_LPAREN:
+            parser_eat(parser, TOKEN_TYPE_LPAREN);
+            node = parser_parse_expression(parser);
+            parser_eat(parser, TOKEN_TYPE_RPAREN);
+            break;
         default:
             break;
     }
