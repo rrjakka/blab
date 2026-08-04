@@ -40,7 +40,6 @@ token_t lexer_next_token(lexer_t* lexer)
         .type = TOKEN_TYPE_EOF,
     };
 
-
     char current_char = lexer->source[lexer->i];
     while (lexer_can_advance(lexer) && isspace(current_char = lexer->source[lexer->i])) lexer->i++;
 
