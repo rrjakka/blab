@@ -16,6 +16,8 @@ typedef struct
 
 ast_node_t* binary_op_node_new(token_t operation, ast_node_t* left, ast_node_t* right);
 
+void binary_op_node_free(binary_op_node_t* binary_op_node);
+
 value_t binary_op_node_evaluate(const binary_op_node_t* binary_op_node);
 
 #endif // BLAB_BINARY_OP_NODE_H

@@ -12,6 +12,11 @@ ast_node_t* literal_node_new(const value_t value)
     return node;
 }
 
+void literal_node_free(literal_node_t* literal_node)
+{
+    free(literal_node);
+}
+
 value_t literal_node_evaluate(const literal_node_t* literal_node)
 {
     return literal_node->value;

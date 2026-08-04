@@ -34,7 +34,15 @@ token_t parser_eat(parser_t* parser, const token_type_t type)
 
 ast_node_t* parser_parse(parser_t* parser)
 {
-    return parser_parse_expression(parser);
+    ast_node_t* node = parser_parse_expression(parser);
+
+    if (!parser_match(parser, TOKEN_TYPE_EOF))
+    {
+        fprintf(stderr, "Unexpected token after expression\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return node;
 }
 
 ast_node_t* parser_parse_expression(parser_t* parser)
@@ -86,6 +94,12 @@ ast_node_t* parser_parse_factor(parser_t* parser)
             break;
         default:
             break;
+    }
+
+    if (!node)
+    {
+        fprintf(stderr, "Unexpected token type\n");
+        exit(EXIT_FAILURE);
     }
 
     return node;

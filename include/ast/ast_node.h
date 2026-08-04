@@ -22,4 +22,6 @@ typedef struct AST_NODE_STRUCT
 
 value_t ast_node_evaluate(const ast_node_t* node);
 
+void ast_node_free(ast_node_t* node);
+
 #endif // BLAB_AST_NODE_H
