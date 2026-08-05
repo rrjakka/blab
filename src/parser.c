@@ -45,6 +45,13 @@ ast_node_t* parser_parse(parser_t* parser)
     return node;
 }
 
+ast_node_t* parser_parse_variable(parser_t* parser)
+{
+    const string_view_t name = parser_eat(parser, TOKEN_TYPE_IDENTIFIER).value.as_string;
+
+    return variable_node_new(name);
+}
+
 ast_node_t* parser_parse_expression(parser_t* parser)
 {
     ast_node_t* left = parser_parse_term(parser);
@@ -86,6 +93,9 @@ ast_node_t* parser_parse_factor(parser_t* parser)
     {
         case TOKEN_TYPE_NUMBER:
             node = literal_node_new(parser_eat(parser, TOKEN_TYPE_NUMBER).value.as_number);
+            break;
+        case TOKEN_TYPE_IDENTIFIER:
+            node = parser_parse_variable(parser);
             break;
         case TOKEN_TYPE_LPAREN:
             parser_eat(parser, TOKEN_TYPE_LPAREN);

@@ -24,6 +24,8 @@ unsigned long long context_hash(const context_t* context, string_view_t key);
 
 void context_push(const context_t* context, string_view_t key, value_t value);
 
+void context_set(const context_t* context, string_view_t key, value_t value);
+
 context_item_t* context_get(const context_t* context, string_view_t key);
 
 void context_free(context_t* context);

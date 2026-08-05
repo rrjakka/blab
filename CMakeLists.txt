@@ -21,6 +21,8 @@ add_executable(
         include/context.h
         src/context.c
         include/utils/string_view.h
+        include/ast/variable_node.h
+        src/ast/variable_node.c
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})

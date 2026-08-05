@@ -10,7 +10,7 @@ context_t* context_new()
 
     context->capacity = 256;
     context->size = 0;
-    context->items = (context_item_t**)malloc(sizeof(context_item_t) * context->capacity);
+    context->items = (context_item_t**)calloc(context->capacity,sizeof(context_item_t*));
 
     return context;
 }
@@ -47,6 +47,12 @@ void context_push(const context_t* context, const string_view_t key, const value
     else context->items[hash_index] = item;
 }
 
+void context_set(const context_t* context, const string_view_t key, const value_t value)
+{
+    context_item_t* node = context_get(context, key);
+    node->value = value;
+}
+
 context_item_t* context_get(const context_t* context, const string_view_t key)
 {
     const unsigned long long hash_index = context_hash(context, key);
@@ -68,6 +74,18 @@ context_item_t* context_get(const context_t* context, const string_view_t key)
 
 void context_free(context_t* context)
 {
+    for (unsigned long long i = 0; i < context->capacity; ++i)
+    {
+        context_item_t* node = context->items[i];
+
+        while (node != nullptr)
+        {
+            context_item_t* next = node->next;
+            free(node);
+            node = next;
+        }
+    }
+
     free(context->items);
     free(context);
 }

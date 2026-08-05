@@ -23,10 +23,10 @@ void binary_op_node_free(binary_op_node_t* binary_op_node)
     free(binary_op_node);
 }
 
-value_t binary_op_node_evaluate(const binary_op_node_t* binary_op_node)
+value_t binary_op_node_evaluate(const binary_op_node_t* binary_op_node, context_t* context)
 {
-    const value_t left_value = ast_node_evaluate(binary_op_node->left);
-    const value_t right_value = ast_node_evaluate(binary_op_node->right);
+    const value_t left_value = ast_node_evaluate(binary_op_node->left, context);
+    const value_t right_value = ast_node_evaluate(binary_op_node->right, context);
 
     switch (binary_op_node->operation.type)
     {
