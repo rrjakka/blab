@@ -133,6 +133,12 @@ ast_node_t* parser_parse_factor(parser_t* parser)
                 .value.as_number = parser_eat(parser, TOKEN_TYPE_NUMBER).value.as_number
             });
             break;
+        case TOKEN_TYPE_STRING:
+            node = literal_node_new((value_t){
+                .type = VALUE_TYPE_STRING,
+                .value.as_string = parser_eat(parser, TOKEN_TYPE_STRING).value.as_string
+            });
+            break;
         case TOKEN_TYPE_IDENTIFIER:
             node = parser_parse_identifier(parser);
             break;

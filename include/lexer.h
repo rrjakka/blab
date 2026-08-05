@@ -22,6 +22,8 @@ token_t lexer_next_number(lexer_t* lexer);
 
 token_t lexer_next_identifier(lexer_t* lexer);
 
+token_t lexer_next_string(lexer_t* lexer);
+
 void lexer_free(lexer_t* lexer);
 
 #endif // PESEC_LEXER_H

@@ -45,6 +45,7 @@ token_t lexer_next_token(lexer_t* lexer)
 
     if (isdigit(current_char) || current_char == '.') return lexer_next_number(lexer);
     if (isalpha(current_char) || current_char == '_') return lexer_next_identifier(lexer);
+    if (current_char == '"') return lexer_next_string(lexer);
     switch (current_char)
     {
         case '+': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_PLUS };
@@ -94,7 +95,7 @@ token_t lexer_next_number(lexer_t* lexer)
     free(buffer);
 
     return (token_t){
-        .value = (token_value_t){ .as_number = value },
+        .value.as_number = value,
         .type = TOKEN_TYPE_NUMBER,
     };
 }
@@ -110,13 +111,31 @@ token_t lexer_next_identifier(lexer_t* lexer)
             )) lexer_advance(lexer);
 
     return (token_t){
-        .value = (token_value_t) {
-            .as_string = {
-                .string = lexer->source + begin,
-                .length = lexer->i - begin,
-            }
+        .value.as_string = {
+            .string = lexer->source + begin,
+            .length = lexer->i - begin,
         },
         .type = TOKEN_TYPE_IDENTIFIER,
+    };
+}
+
+token_t lexer_next_string(lexer_t* lexer)
+{
+    lexer_advance(lexer);
+    const unsigned long long begin = lexer->i;
+
+    while (lexer_can_advance(lexer) && lexer->source[lexer->i] != '"') lexer_advance(lexer);
+
+    const unsigned long long length = lexer->i - begin;
+
+    lexer_advance(lexer);
+
+    return (token_t){
+        .value.as_string = {
+            .string = lexer->source + begin,
+            .length = length,
+        },
+        .type = TOKEN_TYPE_STRING,
     };
 }
 
