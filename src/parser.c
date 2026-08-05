@@ -34,15 +34,16 @@ token_t parser_eat(parser_t* parser, const token_type_t type)
 
 ast_node_t* parser_parse(parser_t* parser)
 {
-    ast_node_t* node = parser_parse_expression(parser);
+    const auto statements = (ast_node_t**)calloc(256, sizeof(ast_node_t*));
+    unsigned long long statements_count = 0;
 
-    if (!parser_match(parser, TOKEN_TYPE_EOF))
+    while (!parser_match(parser, TOKEN_TYPE_EOF))
     {
-        fprintf(stderr, "Unexpected token type %d\n", parser->current_token.type);
-        exit(EXIT_FAILURE);
+        statements[statements_count++] = parser_parse_expression(parser);
+        parser_eat(parser, TOKEN_TYPE_SEMICOLON);
     }
 
-    return node;
+    return statement_sequence_node_new(statements, statements_count);
 }
 
 ast_node_t* parser_parse_identifier(parser_t* parser)

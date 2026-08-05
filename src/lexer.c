@@ -52,6 +52,7 @@ token_t lexer_next_token(lexer_t* lexer)
         case '*': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_ASTERISK };
         case '/': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_SLASH };
         case ',': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_COMMA };
+        case ';': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_SEMICOLON };
         case '(': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LPAREN };
         case ')': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_RPAREN };
         case '{': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LBRACE };

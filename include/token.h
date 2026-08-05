@@ -23,6 +23,7 @@ typedef enum
     TOKEN_TYPE_RBRACKET,
 
     TOKEN_TYPE_COMMA,
+    TOKEN_TYPE_SEMICOLON,
 
     TOKEN_TYPE_EOF
 } token_type_t;

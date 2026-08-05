@@ -11,6 +11,7 @@ value_t ast_node_evaluate(const ast_node_t* node, context_t* context)
         case AST_NODE_BINARY: return binary_op_node_evaluate(node->node.binary_op, context);
         case AST_NODE_VARIABLE: return variable_node_evaluate(node->node.variable, context);
         case AST_NODE_FUNCTION_CALL: return function_call_node_evaluate(node->node.function_call, context);
+        case AST_NODE_STATEMENT_SEQUENCE: return statement_sequence_node_evaluate(node->node.statement_sequence, context);
     }
 
     fprintf(stderr, "Unknown node type: %d\n", node->type);
@@ -29,6 +30,9 @@ void ast_node_free(ast_node_t* node)
             break;
         case AST_NODE_FUNCTION_CALL:
             function_call_node_free(node->node.function_call);
+            break;
+        case AST_NODE_STATEMENT_SEQUENCE:
+            statement_sequence_node_free(node->node.statement_sequence);
             break;
         case AST_NODE_LITERAL:
             break;
