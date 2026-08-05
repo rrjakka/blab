@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-lexer_t* lexer_new(char* source, const long long length)
+lexer_t* lexer_new(char* source, const unsigned long long length)
 {
     const auto lexer = (lexer_t*)malloc(sizeof(lexer_t));
 

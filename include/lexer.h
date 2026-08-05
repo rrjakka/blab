@@ -6,11 +6,11 @@
 typedef struct
 {
     char* source;
-    long long i;
-    long long length;
+    unsigned long long i;
+    unsigned long long length;
 } lexer_t;
 
-lexer_t* lexer_new(char* source, long long length);
+lexer_t* lexer_new(char* source, unsigned long long length);
 
 void lexer_advance(lexer_t* lexer);
 
