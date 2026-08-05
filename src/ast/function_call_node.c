@@ -20,6 +20,9 @@ ast_node_t* function_call_node_new(const string_view_t name, ast_node_t **argume
 
 void function_call_node_free(function_call_node_t* function_call_node)
 {
+    for (int i = 0; i < function_call_node->arguments_count; i++)
+        ast_node_free(function_call_node->arguments[i]);
+
     free(function_call_node);
 }
 

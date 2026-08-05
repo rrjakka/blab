@@ -15,6 +15,11 @@ ast_node_t* statement_sequence_node_new(ast_node_t** statements, unsigned long l
 
 void statement_sequence_node_free(statement_sequence_node_t* statement_sequence_node)
 {
+    for (int i = 0; i < statement_sequence_node->statements_count; i++)
+    {
+        ast_node_free(statement_sequence_node->statements[i]);
+    }
+
     free(statement_sequence_node);
 }
 
