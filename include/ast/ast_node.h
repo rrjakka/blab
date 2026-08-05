@@ -4,6 +4,7 @@
 #include "binary_op_node.h"
 #include "literal_node.h"
 #include "variable_node.h"
+#include "function_call_node.h"
 
 #include "include/context.h"
 
@@ -12,6 +13,7 @@ typedef enum
     AST_NODE_LITERAL,
     AST_NODE_BINARY,
     AST_NODE_VARIABLE,
+    AST_NODE_FUNCTION_CALL,
 } ast_node_type_t;
 
 typedef struct AST_NODE_STRUCT
@@ -22,6 +24,7 @@ typedef struct AST_NODE_STRUCT
         literal_node_t* literal;
         binary_op_node_t* binary_op;
         variable_node_t* variable;
+        function_call_node_t* function_call;
     } node;
 } ast_node_t;
 

@@ -18,7 +18,11 @@ token_t parser_eat(parser_t* parser, token_type_t type);
 
 ast_node_t* parser_parse(parser_t* parser);
 
-ast_node_t* parser_parse_variable(parser_t* parser);
+ast_node_t *parser_parse_identifier(parser_t *parser);
+
+ast_node_t *parser_parse_variable(parser_t *parser, string_view_t name);
+
+ast_node_t *parser_parse_function_call(parser_t *parser, string_view_t name);
 
 // у отца было три сына
 

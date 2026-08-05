@@ -23,6 +23,8 @@ add_executable(
         include/utils/string_view.h
         include/ast/variable_node.h
         src/ast/variable_node.c
+        include/ast/function_call_node.h
+        src/ast/function_call_node.c
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})

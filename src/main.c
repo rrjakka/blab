@@ -39,7 +39,7 @@ int main(const int argc, char** argv)
     ast_node_t* ast = parser_parse(parser);
     context_t* context = context_new();
 
-    context_push(context, (string_view_t) {.string="hello", .length=5}, 69.420);
+    context_push(context, (string_view_t) { .string="hello", .length=5 }, 69.420);
 
     const value_t result = ast_node_evaluate(ast, context);
 
