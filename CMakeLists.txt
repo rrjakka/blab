@@ -27,6 +27,8 @@ add_executable(
         src/ast/function_call_node.c
         src/ast/statement_sequence_node.c
         include/ast/statement_sequence_node.h
+        src/utils/string_view.c
+        src/value.c
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})

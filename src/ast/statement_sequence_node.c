@@ -25,12 +25,15 @@ void statement_sequence_node_free(statement_sequence_node_t* statement_sequence_
 
 value_t statement_sequence_node_evaluate(const statement_sequence_node_t* statement_sequence_node, context_t* context)
 {
-    long double result = 0;
+    auto result = (value_t){
+        .type = VALUE_TYPE_NUMBER,
+        .value = (value_value_t){
+            .as_number=0
+        }
+    };
 
     for (int i = 0; i < statement_sequence_node->statements_count; i++)
-    {
         result = ast_node_evaluate(statement_sequence_node->statements[i], context);
-    }
 
     return result;
 }

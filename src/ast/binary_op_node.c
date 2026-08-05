@@ -30,10 +30,10 @@ value_t binary_op_node_evaluate(const binary_op_node_t* binary_op_node, context_
 
     switch (binary_op_node->operation.type)
     {
-        case TOKEN_TYPE_PLUS: return left_value + right_value;
-        case TOKEN_TYPE_MINUS: return left_value - right_value;
-        case TOKEN_TYPE_ASTERISK: return left_value * right_value;
-        case TOKEN_TYPE_SLASH: return left_value / right_value;
+        case TOKEN_TYPE_PLUS: return value_operation_add(left_value, right_value);
+        case TOKEN_TYPE_MINUS: return value_operation_sub(left_value, right_value);
+        case TOKEN_TYPE_ASTERISK: return value_operation_mul(left_value, right_value);
+        case TOKEN_TYPE_SLASH: return value_operation_div(left_value, right_value);
         default:
             fprintf(stderr, "Unknown binary operator type %d\n", binary_op_node->operation.type);
             exit(EXIT_FAILURE);

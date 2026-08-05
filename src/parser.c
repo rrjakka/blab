@@ -128,7 +128,10 @@ ast_node_t* parser_parse_factor(parser_t* parser)
     switch (parser->current_token.type)
     {
         case TOKEN_TYPE_NUMBER:
-            node = literal_node_new(parser_eat(parser, TOKEN_TYPE_NUMBER).value.as_number);
+            node = literal_node_new((value_t){
+                .type = VALUE_TYPE_NUMBER,
+                .value.as_number = parser_eat(parser, TOKEN_TYPE_NUMBER).value.as_number
+            });
             break;
         case TOKEN_TYPE_IDENTIFIER:
             node = parser_parse_identifier(parser);

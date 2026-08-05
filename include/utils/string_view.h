@@ -7,4 +7,6 @@ typedef struct
     unsigned int length;
 } string_view_t;
 
+string_view_t string_view_from(const char* string);
+
 #endif // PESEC_STRING_VIEW_H
