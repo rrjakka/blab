@@ -20,7 +20,7 @@ unsigned long long context_hash(const context_t* context, const string_view_t ke
     unsigned long long sum = 0;
     for (unsigned long long i = 0; i < key.length; i++)
     {
-        sum += key.string[i] ^ 'f' ^ 'u' ^ 'c' ^ 'k';
+        sum += (key.string[i] * (i + 256)) ^ 'f' ^ 'u' ^ 'c' ^ 'k';
     }
     return sum % context->capacity;
 }
@@ -61,8 +61,7 @@ context_item_t* context_get(const context_t* context, const string_view_t key)
 
     while (node)
     {
-        if (node->key.length == key.length &&
-            memcmp(node->key.string, key.string, key.length) == 0)
+        if (node->key.length == key.length && string_view_equals(node->key, key))
             return node;
 
         node = node->next;

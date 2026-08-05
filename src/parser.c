@@ -50,6 +50,8 @@ ast_node_t* parser_parse_identifier(parser_t* parser)
 {
     const string_view_t name = parser_eat(parser, TOKEN_TYPE_IDENTIFIER).value.as_string;
 
+    if (string_view_equals_cstr(name, "mutab")) return parser_parse_variable_definition(parser);
+
     if (parser_match(parser, TOKEN_TYPE_LPAREN)) return parser_parse_function_call(parser, name);
 
     return parser_parse_variable(parser, name);
@@ -58,6 +60,24 @@ ast_node_t* parser_parse_identifier(parser_t* parser)
 ast_node_t* parser_parse_variable(parser_t* parser, const string_view_t name)
 {
     return variable_node_new(name);
+}
+
+ast_node_t *parser_parse_variable_definition(parser_t *parser)
+{
+    const string_view_t name = parser_eat(parser, TOKEN_TYPE_IDENTIFIER).value.as_string;
+
+    ast_node_t* value = literal_node_new((value_t){
+        .type = VALUE_TYPE_NUMBER,
+        .value.as_number = 0,
+    });
+
+    if (parser_match(parser, TOKEN_TYPE_EQUALS))
+    {
+        parser_eat(parser, TOKEN_TYPE_EQUALS);
+        value = parser_parse_expression(parser);
+    }
+
+    return variable_definition_node_new(name, value);
 }
 
 ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t name)
@@ -70,22 +90,29 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
         return function_call_node_new(name, nullptr, 0);
     }
 
-    const auto args = (ast_node_t**)calloc(256, sizeof(ast_node_t*)); // TODO: dynamically resize array
-    unsigned long long arg_count = 0;
 
-    args[arg_count] = parser_parse_expression(parser);
-    ++arg_count;
+    unsigned long long args_capacity = 256;
+    unsigned long long args_count = 0;
+    auto args = (ast_node_t**)calloc(args_capacity, sizeof(ast_node_t*)); // TODO: dynamically resize array
+
+    args[args_count] = parser_parse_expression(parser);
+    ++args_count;
 
     while (parser_match(parser, TOKEN_TYPE_COMMA))
     {
         parser_eat(parser, TOKEN_TYPE_COMMA);
-        args[arg_count] = parser_parse_expression(parser);
-        ++arg_count;
+        args[args_count] = parser_parse_expression(parser);
+        ++args_count;
+        if (args_count >= args_capacity)
+        {
+            args_capacity *= 2;
+            args = (ast_node_t**)realloc(args, args_capacity * sizeof(ast_node_t*));
+        }
     }
 
     parser_eat(parser, TOKEN_TYPE_RPAREN);
 
-    return function_call_node_new(name, args, arg_count);
+    return function_call_node_new(name, args, args_count);
 }
 
 ast_node_t* parser_parse_expression(parser_t* parser)
@@ -125,6 +152,7 @@ ast_node_t* parser_parse_term(parser_t* parser)
 ast_node_t* parser_parse_factor(parser_t* parser)
 {
     ast_node_t* node = nullptr;
+
     switch (parser->current_token.type)
     {
         case TOKEN_TYPE_NUMBER:

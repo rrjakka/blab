@@ -33,7 +33,7 @@ value_t function_call_node_evaluate(const function_call_node_t* function_call_no
     for (int i = 0; i < function_call_node->arguments_count; i++)
         evaluated_values[i] = ast_node_evaluate(function_call_node->arguments[i], context);
 
-    if (memcmp(function_call_node->name.string, "println", function_call_node->name.length) == 0)
+    if (string_view_equals_cstr(function_call_node->name, "println"))
     {
         for (int i = 0; i < function_call_node->arguments_count; i++)
         {

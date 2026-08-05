@@ -53,6 +53,7 @@ token_t lexer_next_token(lexer_t* lexer)
     if (current_char == '"') return lexer_next_string(lexer);
     switch (current_char)
     {
+        case '=': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_EQUALS };
         case '+': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_PLUS };
         case '-': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_MINUS };
         case '*': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_ASTERISK };
