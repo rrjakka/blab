@@ -43,6 +43,11 @@ token_t lexer_next_token(lexer_t* lexer)
     char current_char = lexer->source[lexer->i];
     while (lexer_can_advance(lexer) && isspace(current_char = lexer->source[lexer->i])) lexer->i++;
 
+    if (!lexer_can_advance(lexer)) return (token_t){
+        .value = nullptr,
+        .type = TOKEN_TYPE_EOF
+    };
+
     if (isdigit(current_char) || current_char == '.') return lexer_next_number(lexer);
     if (isalpha(current_char) || current_char == '_') return lexer_next_identifier(lexer);
     if (current_char == '"') return lexer_next_string(lexer);

@@ -1,1 +1,2 @@
 println("pesec");
+println("2 + 2 * 2 = ", 2 + 2 * 2);
