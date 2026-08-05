@@ -1,5 +1,5 @@
-#ifndef BLAB_AST_NODE_H
-#define BLAB_AST_NODE_H
+#ifndef PESEC_AST_NODE_H
+#define PESEC_AST_NODE_H
 
 #include "binary_op_node.h"
 #include "literal_node.h"
@@ -24,4 +24,4 @@ value_t ast_node_evaluate(const ast_node_t* node);
 
 void ast_node_free(ast_node_t* node);
 
-#endif // BLAB_AST_NODE_H
+#endif // PESEC_AST_NODE_H

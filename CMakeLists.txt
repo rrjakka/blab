@@ -18,6 +18,9 @@ add_executable(
         include/ast/binary_op_node.h
         src/ast/literal_node.c
         include/ast/literal_node.h
+        include/context.h
+        src/context.c
+        include/utils/string_view.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})

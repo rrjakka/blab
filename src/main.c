@@ -3,16 +3,36 @@
 
 #include "include/lexer.h"
 #include "include/parser.h"
+#include "include/context.h"
 
+
+void test_context()
+{
+    context_t* context = context_new();
+
+    context_push(context, (string_view_t){.string="a10", .length=3}, 5.f);
+    context_push(context, (string_view_t){.string="a01", .length=3}, 9.f);
+
+    const context_item_t* a10 = context_get(context, (string_view_t){.string="a10", .length=3});
+    const context_item_t* a01 = context_get(context, (string_view_t){.string="a01", .length=3});
+
+    printf("%.*s = %Lf\n", a10->key.length, a10->key.string, a10->value);
+    printf("%.*s = %Lf\n", a01->key.length, a01->key.string, a01->value);
+
+    context_free(context);
+}
 
 int main(const int argc, char** argv)
 {
+    test_context();
+
+    return EXIT_SUCCESS;
+
     if (argc < 2)
     {
         printf("Usage: pesec <file>\n");
         return EXIT_SUCCESS;
     }
-
 
     const char* filename = argv[1];
     char* source = nullptr;
@@ -45,7 +65,7 @@ int main(const int argc, char** argv)
     lexer_free(lexer);
     parser_free(parser);
 
-    printf("finnished with %Lf", result);
+    printf("finished with %Lf", result);
 
     return EXIT_SUCCESS;
 }

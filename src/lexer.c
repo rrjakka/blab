@@ -65,7 +65,7 @@ token_t lexer_next_token(lexer_t* lexer)
 
 token_t lexer_next_number(lexer_t* lexer)
 {
-    const long long begin = lexer->i;
+    const unsigned long long begin = lexer->i;
     bool has_dot = false;
 
     while (lexer_can_advance(lexer) && (isdigit(lexer->source[lexer->i]) || lexer->source[lexer->i] == '.'))
@@ -82,7 +82,7 @@ token_t lexer_next_number(lexer_t* lexer)
         lexer_advance(lexer);
     }
 
-    const long long buffer_size = lexer->i - begin;
+    const unsigned long long buffer_size = lexer->i - begin;
     const auto buffer = (char*)malloc(sizeof(char) * buffer_size + 1);
     memcpy(buffer, lexer->source + begin, buffer_size );
     buffer[buffer_size] = '\0';
@@ -99,7 +99,7 @@ token_t lexer_next_number(lexer_t* lexer)
 
 token_t lexer_next_identifier(lexer_t* lexer)
 {
-    const long long begin = lexer->i;
+    const unsigned long long begin = lexer->i;
 
     while (lexer_can_advance(lexer) && (
             isalnum(lexer->source[lexer->i]) ||
@@ -110,7 +110,7 @@ token_t lexer_next_identifier(lexer_t* lexer)
     return (token_t){
         .value = (token_value_t) {
             .as_string = {
-                .ptr = lexer->source + begin,
+                .string = lexer->source + begin,
                 .length = lexer->i - begin,
             }
         },

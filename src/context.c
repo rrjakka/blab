@@ -1,0 +1,73 @@
+#include "include/context.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+context_t* context_new()
+{
+    const auto context = (context_t*)malloc(sizeof(context_t));
+
+    context->capacity = 256;
+    context->size = 0;
+    context->items = (context_item_t**)malloc(sizeof(context_item_t) * context->capacity);
+
+    return context;
+}
+
+unsigned long long context_hash(const context_t* context, const string_view_t key)
+{
+    unsigned long long sum = 0;
+    for (unsigned long long i = 0; i < key.length; i++)
+    {
+        sum += key.string[i] ^ 'f' ^ 'u' ^ 'c' ^ 'k';
+    }
+    return sum % context->capacity;
+}
+
+void context_push(const context_t* context, const string_view_t key, const value_t value)
+{
+    const unsigned long long hash_index = context_hash(context, key);
+
+    const auto item = (context_item_t*)malloc(sizeof(context_item_t));
+    item->key = key;
+    item->value = value;
+    item->next = nullptr;
+
+    context_item_t* node = context->items[hash_index];
+
+    if (node)
+    {
+        while (node->next)
+        {
+            node = node->next;
+        }
+        node->next = item;
+    }
+    else context->items[hash_index] = item;
+}
+
+context_item_t* context_get(const context_t* context, const string_view_t key)
+{
+    const unsigned long long hash_index = context_hash(context, key);
+
+    context_item_t* node = context->items[hash_index];
+
+    while (node)
+    {
+        if (node->key.length == key.length &&
+            memcmp(node->key.string, key.string, key.length) == 0)
+            return node;
+
+        node = node->next;
+    }
+
+    fprintf(stderr, "Variable %.*s doesn't exist\n", key.length, key.string);
+    exit(1);
+}
+
+void context_free(context_t* context)
+{
+    free(context->items);
+    free(context);
+}

@@ -1,5 +1,5 @@
-#ifndef BLAB_PARSER_H
-#define BLAB_PARSER_H
+#ifndef PESEC_PARSER_H
+#define PESEC_PARSER_H
 
 #include "lexer.h"
 #include "ast/ast_node.h"
@@ -28,4 +28,4 @@ ast_node_t* parser_parse_factor(parser_t* parser); // младший был ку
 
 void parser_free(parser_t* parser);
 
-#endif// BLAB_PARSER_H
+#endif // PESEC_PARSER_H

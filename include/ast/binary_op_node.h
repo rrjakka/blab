@@ -1,5 +1,5 @@
-#ifndef BLAB_BINARY_OP_NODE_H
-#define BLAB_BINARY_OP_NODE_H
+#ifndef PESEC_BINARY_OP_NODE_H
+#define PESEC_BINARY_OP_NODE_H
 
 #include "include/token.h"
 #include "include/value.h"
@@ -20,4 +20,4 @@ void binary_op_node_free(binary_op_node_t* binary_op_node);
 
 value_t binary_op_node_evaluate(const binary_op_node_t* binary_op_node);
 
-#endif // BLAB_BINARY_OP_NODE_H
+#endif // PESEC_BINARY_OP_NODE_H

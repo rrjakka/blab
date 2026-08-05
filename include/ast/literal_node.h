@@ -1,5 +1,5 @@
-#ifndef BLAB_LITERAL_NODE_H
-#define BLAB_LITERAL_NODE_H
+#ifndef PESEC_LITERAL_NODE_H
+#define PESEC_LITERAL_NODE_H
 
 #include "include/value.h"
 
@@ -16,4 +16,4 @@ void literal_node_free(literal_node_t* literal_node);
 
 value_t literal_node_evaluate(const literal_node_t* literal_node);
 
-#endif // BLAB_LITERAL_NODE_H
+#endif // PESEC_LITERAL_NODE_H

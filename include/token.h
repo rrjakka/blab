@@ -1,5 +1,7 @@
-#ifndef BLAB_TOKEN_H
-#define BLAB_TOKEN_H
+#ifndef PESEC_TOKEN_H
+#define PESEC_TOKEN_H
+
+#include "utils/string_view.h"
 
 typedef enum
 {
@@ -25,11 +27,7 @@ typedef enum
 
 typedef union
 {
-    struct
-    {
-        char* ptr;
-        long long length;
-    } as_string;
+    string_view_t as_string;
     long double as_number;
 } token_value_t;
 
@@ -39,4 +37,4 @@ typedef struct
     token_type_t type;
 } token_t;
 
-#endif // BLAB_TOKEN_H
+#endif // PESEC_TOKEN_H

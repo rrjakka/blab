@@ -1,5 +1,5 @@
-#ifndef BLAB_LEXER_H
-#define BLAB_LEXER_H
+#ifndef PESEC_LEXER_H
+#define PESEC_LEXER_H
 
 #include "token.h"
 
@@ -24,4 +24,4 @@ token_t lexer_next_identifier(lexer_t* lexer);
 
 void lexer_free(lexer_t* lexer);
 
-#endif // BLAB_LEXER_H
+#endif // PESEC_LEXER_H
