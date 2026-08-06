@@ -59,6 +59,7 @@ ast_node_t *parser_parse_identifier(parser_t *parser)
 
     if (string_view_equals_cstr(name, "mutab")) return parser_parse_variable_definition(parser);
     if (string_view_equals_cstr(name, "if")) return parser_parse_if(parser);
+    if (string_view_equals_cstr(name, "while")) return parser_parse_while(parser);
 
     if (parser_match(parser, TOKEN_TYPE_LPAREN)) return parser_parse_function_call(parser, name);
 
@@ -137,6 +138,15 @@ ast_node_t *parser_parse_if(parser_t *parser)
     }
 
     return condition_node_new(condition, if_body, else_body);
+}
+
+ast_node_t *parser_parse_while(parser_t *parser)
+{
+    ast_node_t *condition = parser_parse_expression(parser);
+
+    ast_node_t *while_body = parser_parse_expression(parser);
+
+    return while_loop_node_new(condition, while_body);
 }
 
 ast_node_t *parser_parse_expression(parser_t *parser)

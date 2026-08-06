@@ -57,7 +57,7 @@ value_t value_operation_div(const value_t left, const value_t right)
     if (left.type == VALUE_TYPE_NUMBER && right.type == VALUE_TYPE_NUMBER)
         return (value_t) {
             .type = VALUE_TYPE_NUMBER,
-            .value.as_number = left.value.as_number + right.value.as_number,
+            .value.as_number = left.value.as_number / right.value.as_number,
         };
 
     fprintf(stderr, "Non number type can't use operator '/'\n");

@@ -1,10 +1,7 @@
-mutab a = if (1) {
-    "foo";
-} else {
-    "bar";
-};
+mutab i = 0;
 
-println(a, a, {
-    mutab b = 42;
-    b / 2;
-});
+while (5 - i)
+{
+    i = i + 1;
+    println("i = ", i);
+};

@@ -9,6 +9,7 @@
 #include "function_call_node.h"
 #include "statement_sequence_node.h"
 #include "condition_node.h"
+#include "while_loop_node.h"
 
 #include "include/context.h"
 
@@ -22,6 +23,7 @@ typedef enum
     AST_NODE_FUNCTION_CALL,
     AST_NODE_STATEMENT_SEQUENCE,
     AST_NODE_CONDITION,
+    AST_NODE_WHILE_LOOP,
 } ast_node_type_t;
 
 typedef struct AST_NODE_STRUCT
@@ -37,6 +39,7 @@ typedef struct AST_NODE_STRUCT
         function_call_node_t* function_call;
         statement_sequence_node_t* statement_sequence;
         condition_node_t* condition;
+        while_loop_node_t* while_loop;
     } node;
 } ast_node_t;
 

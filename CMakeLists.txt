@@ -34,6 +34,9 @@ add_executable(
         src/ast/variable_assignment_node.c
         include/ast/condition_node.h
         src/ast/condition_node.c
+        src/ast/while_loop_node.c
+        include/ast/while_loop_node.h
+        include/ast/while_loop_node.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
