@@ -4,9 +4,9 @@
 #include <stdlib.h>
 
 
-parser_t* parser_new(lexer_t* lexer)
+parser_t *parser_new(lexer_t *lexer)
 {
-    const auto parser = (parser_t*)malloc(sizeof(parser_t));
+    const auto parser = (parser_t *) malloc(sizeof(parser_t));
 
     parser->lexer = lexer;
     parser->current_token = lexer_next_token(parser->lexer);
@@ -14,12 +14,12 @@ parser_t* parser_new(lexer_t* lexer)
     return parser;
 }
 
-bool parser_match(const parser_t* parser, const token_type_t type)
+bool parser_match(const parser_t *parser, const token_type_t type)
 {
     return parser->current_token.type == type;
 }
 
-token_t parser_eat(parser_t* parser, const token_type_t type)
+token_t parser_eat(parser_t *parser, const token_type_t type)
 {
     if (!parser_match(parser, type))
     {
@@ -32,19 +32,28 @@ token_t parser_eat(parser_t* parser, const token_type_t type)
     return prev_token;
 }
 
-ast_node_t* parser_parse(parser_t* parser)
+ast_node_t *parser_parse(parser_t *parser)
 {
-    ast_node_t* statement_sequence = statement_sequence_node_new();
-    while (!parser_match(parser, TOKEN_TYPE_EOF))
+    return parser_parse_statement_sequence(parser, false);
+}
+
+ast_node_t *parser_parse_statement_sequence(parser_t *parser, const bool between_braces)
+{
+    ast_node_t *statement_sequence = statement_sequence_node_new();
+
+    if (between_braces) parser_eat(parser, TOKEN_TYPE_LBRACE);
+
+    while (!parser_match(parser, TOKEN_TYPE_EOF) && (!between_braces || !parser_match(parser, TOKEN_TYPE_RBRACE)))
     {
         statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
         parser_eat(parser, TOKEN_TYPE_SEMICOLON);
     }
+    if (between_braces) parser_eat(parser, TOKEN_TYPE_RBRACE);
 
     return statement_sequence;
 }
 
-ast_node_t* parser_parse_identifier(parser_t* parser)
+ast_node_t *parser_parse_identifier(parser_t *parser)
 {
     const string_view_t name = parser_eat(parser, TOKEN_TYPE_IDENTIFIER).value.as_string;
 
@@ -58,7 +67,7 @@ ast_node_t* parser_parse_identifier(parser_t* parser)
     return parser_parse_variable(parser, name);
 }
 
-ast_node_t* parser_parse_variable(parser_t* parser, const string_view_t name)
+ast_node_t *parser_parse_variable(parser_t *parser, const string_view_t name)
 {
     return variable_node_new(name);
 }
@@ -67,7 +76,7 @@ ast_node_t *parser_parse_variable_definition(parser_t *parser)
 {
     const string_view_t name = parser_eat(parser, TOKEN_TYPE_IDENTIFIER).value.as_string;
 
-    ast_node_t* value = literal_node_new((value_t){
+    ast_node_t *value = literal_node_new((value_t){
         .type = VALUE_TYPE_NUMBER,
         .value.as_number = 0,
     });
@@ -84,7 +93,7 @@ ast_node_t *parser_parse_variable_definition(parser_t *parser)
 ast_node_t *parser_parse_variable_assignment(parser_t *parser, string_view_t name)
 {
     parser_eat(parser, TOKEN_TYPE_EQUALS);
-    ast_node_t* value = parser_parse_expression(parser);
+    ast_node_t *value = parser_parse_expression(parser);
 
     return variable_assignment_node_new(name, value);
 }
@@ -99,7 +108,7 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
         return function_call_node_new(name, nullptr);
     }
 
-    ast_node_t* statement_sequence = statement_sequence_node_new();
+    ast_node_t *statement_sequence = statement_sequence_node_new();
     statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
 
     while (parser_match(parser, TOKEN_TYPE_COMMA))
@@ -113,12 +122,12 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
     return function_call_node_new(name, statement_sequence);
 }
 
-ast_node_t* parser_parse_if(parser_t* parser)
+ast_node_t *parser_parse_if(parser_t *parser)
 {
-    ast_node_t* condition = parser_parse_expression(parser);
+    ast_node_t *condition = parser_parse_expression(parser);
 
-    ast_node_t* if_body = parser_parse_expression(parser);
-    ast_node_t* else_body = nullptr;
+    ast_node_t *if_body = parser_parse_expression(parser);
+    ast_node_t *else_body = nullptr;
 
     if (parser_match(parser, TOKEN_TYPE_IDENTIFIER) &&
         string_view_equals_cstr(parser->current_token.value.as_string, "else"))
@@ -130,10 +139,10 @@ ast_node_t* parser_parse_if(parser_t* parser)
     return condition_node_new(condition, if_body, else_body);
 }
 
-ast_node_t* parser_parse_expression(parser_t* parser)
+ast_node_t *parser_parse_expression(parser_t *parser)
 {
-    ast_node_t* left = parser_parse_term(parser);
-    ast_node_t* right = nullptr;
+    ast_node_t *left = parser_parse_term(parser);
+    ast_node_t *right = nullptr;
 
     while (parser_match(parser, TOKEN_TYPE_PLUS) ||
            parser_match(parser, TOKEN_TYPE_MINUS))
@@ -147,10 +156,10 @@ ast_node_t* parser_parse_expression(parser_t* parser)
     return left;
 }
 
-ast_node_t* parser_parse_term(parser_t* parser)
+ast_node_t *parser_parse_term(parser_t *parser)
 {
-    ast_node_t* left = parser_parse_factor(parser);
-    ast_node_t* right = nullptr;
+    ast_node_t *left = parser_parse_factor(parser);
+    ast_node_t *right = nullptr;
 
     while (parser_match(parser, TOKEN_TYPE_ASTERISK) ||
            parser_match(parser, TOKEN_TYPE_SLASH))
@@ -164,9 +173,9 @@ ast_node_t* parser_parse_term(parser_t* parser)
     return left;
 }
 
-ast_node_t* parser_parse_factor(parser_t* parser)
+ast_node_t *parser_parse_factor(parser_t *parser)
 {
-    ast_node_t* node = nullptr;
+    ast_node_t *node = nullptr;
 
     switch (parser->current_token.type)
     {
@@ -190,6 +199,9 @@ ast_node_t* parser_parse_factor(parser_t* parser)
             node = parser_parse_expression(parser);
             parser_eat(parser, TOKEN_TYPE_RPAREN);
             break;
+        case TOKEN_TYPE_LBRACE:
+            node = parser_parse_statement_sequence(parser, true);
+            break;
         default:
             break;
     }
@@ -203,7 +215,7 @@ ast_node_t* parser_parse_factor(parser_t* parser)
     return node;
 }
 
-void parser_free(parser_t* parser)
+void parser_free(parser_t *parser)
 {
     free(parser);
 }

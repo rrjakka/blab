@@ -1,10 +1,10 @@
-mutab a = 0;
+mutab a = if (1) {
+    "foo";
+} else {
+    "bar";
+};
 
-if (mutab b = 0)
-    println("DICK")
-else if (a)
-    println("FUCK")
-else
-    println("PENIS");
-
-println(a, " ", b);
+println(a, a, {
+    mutab b = 42;
+    b / 2;
+});
