@@ -10,7 +10,6 @@ ast_node_t* statement_sequence_node_new()
     node->node.statement_sequence = (statement_sequence_node_t*)malloc(sizeof(statement_sequence_node_t));
     node->node.statement_sequence->statements = nullptr;
     node->node.statement_sequence->statements_count = 0;
-    node->node.statement_sequence->tail = nullptr;
     return node;
 }
 
