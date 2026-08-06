@@ -16,6 +16,8 @@ void lexer_advance(lexer_t* lexer);
 
 bool lexer_can_advance(const lexer_t* lexer);
 
+char lexer_get_current_char(const lexer_t* lexer);
+
 token_t lexer_next_token(lexer_t* lexer);
 
 token_t lexer_next_number(lexer_t* lexer);
@@ -23,6 +25,8 @@ token_t lexer_next_number(lexer_t* lexer);
 token_t lexer_next_identifier(lexer_t* lexer);
 
 token_t lexer_next_string(lexer_t* lexer);
+
+token_t lexer_next_operator(lexer_t* lexer);
 
 void lexer_free(lexer_t* lexer);
 

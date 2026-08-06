@@ -32,4 +32,16 @@ value_t value_operation_mul(value_t left, value_t right);
 
 value_t value_operation_div(value_t left, value_t right);
 
+
+value_t value_operation_equals(value_t left, value_t right);
+
+value_t value_operation_less_or_equals(value_t left, value_t right);
+
+value_t value_operation_less(value_t left, value_t right);
+
+value_t value_operation_greater_or_equals(value_t left, value_t right);
+
+value_t value_operation_greater(value_t left, value_t right);
+
+
 #endif // PESEC_VALUE_H

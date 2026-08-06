@@ -45,7 +45,7 @@ ast_node_t *parser_parse_statement_sequence(parser_t *parser, const bool between
 
     while (!parser_match(parser, TOKEN_TYPE_EOF) && (!between_braces || !parser_match(parser, TOKEN_TYPE_RBRACE)))
     {
-        statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
+        statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_statement(parser));
         parser_eat(parser, TOKEN_TYPE_SEMICOLON);
     }
     if (between_braces) parser_eat(parser, TOKEN_TYPE_RBRACE);
@@ -85,7 +85,7 @@ ast_node_t *parser_parse_variable_definition(parser_t *parser)
     if (parser_match(parser, TOKEN_TYPE_EQUALS))
     {
         parser_eat(parser, TOKEN_TYPE_EQUALS);
-        value = parser_parse_expression(parser);
+        value = parser_parse_statement(parser);
     }
 
     return variable_definition_node_new(name, value);
@@ -94,7 +94,7 @@ ast_node_t *parser_parse_variable_definition(parser_t *parser)
 ast_node_t *parser_parse_variable_assignment(parser_t *parser, string_view_t name)
 {
     parser_eat(parser, TOKEN_TYPE_EQUALS);
-    ast_node_t *value = parser_parse_expression(parser);
+    ast_node_t *value = parser_parse_statement(parser);
 
     return variable_assignment_node_new(name, value);
 }
@@ -110,12 +110,12 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
     }
 
     ast_node_t *statement_sequence = statement_sequence_node_new();
-    statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
+    statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_statement(parser));
 
     while (parser_match(parser, TOKEN_TYPE_COMMA))
     {
         parser_eat(parser, TOKEN_TYPE_COMMA);
-        statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
+        statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_statement(parser));
     }
 
     parser_eat(parser, TOKEN_TYPE_RPAREN);
@@ -125,16 +125,16 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
 
 ast_node_t *parser_parse_if(parser_t *parser)
 {
-    ast_node_t *condition = parser_parse_expression(parser);
+    ast_node_t *condition = parser_parse_statement(parser);
 
-    ast_node_t *if_body = parser_parse_expression(parser);
+    ast_node_t *if_body = parser_parse_statement(parser);
     ast_node_t *else_body = nullptr;
 
     if (parser_match(parser, TOKEN_TYPE_IDENTIFIER) &&
         string_view_equals_cstr(parser->current_token.value.as_string, "else"))
     {
         parser_eat(parser, TOKEN_TYPE_IDENTIFIER);
-        else_body = parser_parse_expression(parser);
+        else_body = parser_parse_statement(parser);
     }
 
     return condition_node_new(condition, if_body, else_body);
@@ -142,11 +142,36 @@ ast_node_t *parser_parse_if(parser_t *parser)
 
 ast_node_t *parser_parse_while(parser_t *parser)
 {
-    ast_node_t *condition = parser_parse_expression(parser);
+    ast_node_t *condition = parser_parse_statement(parser);
 
-    ast_node_t *while_body = parser_parse_expression(parser);
+    ast_node_t *while_body = parser_parse_statement(parser);
 
     return while_loop_node_new(condition, while_body);
+}
+
+ast_node_t* parser_parse_statement(parser_t* parser)
+{
+    return parser_parse_comparison(parser);
+}
+
+ast_node_t* parser_parse_comparison(parser_t* parser)
+{
+    ast_node_t *left = parser_parse_expression(parser);
+    ast_node_t *right = nullptr;
+
+    while (parser_match(parser, TOKEN_TYPE_EQUALS_EQUALS) ||
+        parser_match(parser, TOKEN_TYPE_LESS_EQUALS) ||
+        parser_match(parser, TOKEN_TYPE_LESS) ||
+        parser_match(parser, TOKEN_TYPE_GREATER_EQUALS) ||
+        parser_match(parser, TOKEN_TYPE_GREATER))
+    {
+        const token_t operation = parser_eat(parser, parser->current_token.type);
+
+        right = parser_parse_expression(parser);
+        left = binary_op_node_new(operation, left, right);
+    }
+
+    return left;
 }
 
 ast_node_t *parser_parse_expression(parser_t *parser)
@@ -206,7 +231,7 @@ ast_node_t *parser_parse_factor(parser_t *parser)
             break;
         case TOKEN_TYPE_LPAREN:
             parser_eat(parser, TOKEN_TYPE_LPAREN);
-            node = parser_parse_expression(parser);
+            node = parser_parse_statement(parser);
             parser_eat(parser, TOKEN_TYPE_RPAREN);
             break;
         case TOKEN_TYPE_LBRACE:

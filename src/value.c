@@ -63,3 +63,80 @@ value_t value_operation_div(const value_t left, const value_t right)
     fprintf(stderr, "Non number type can't use operator '/'\n");
     exit(EXIT_FAILURE);
 }
+
+value_t value_operation_equals(const value_t left, const value_t right)
+{
+    if (left.type == VALUE_TYPE_NUMBER && right.type == VALUE_TYPE_NUMBER)
+        return (value_t) {
+            .type = VALUE_TYPE_NUMBER,
+            .value.as_number = left.value.as_number == right.value.as_number,
+        };
+    if (left.type == VALUE_TYPE_STRING && right.type == VALUE_TYPE_STRING)
+        return (value_t) {
+            .type = VALUE_TYPE_NUMBER,
+            .value.as_number = string_view_equals(left.value.as_string, right.value.as_string) ? 1.f : 0.f,
+        };
+
+    return (value_t) {
+        .type = VALUE_TYPE_NUMBER,
+        .value.as_number = 0,
+    };
+}
+
+value_t value_operation_less_or_equals(const value_t left, const value_t right)
+{
+    if (left.type == VALUE_TYPE_NUMBER && right.type == VALUE_TYPE_NUMBER)
+        return (value_t) {
+            .type = VALUE_TYPE_NUMBER,
+            .value.as_number = left.value.as_number <= right.value.as_number,
+        };
+
+    return (value_t) {
+        .type = VALUE_TYPE_NUMBER,
+        .value.as_number = 0,
+    };
+}
+
+value_t value_operation_less(const value_t left, const value_t right)
+{
+    if (left.type == VALUE_TYPE_NUMBER && right.type == VALUE_TYPE_NUMBER)
+        return (value_t) {
+            .type = VALUE_TYPE_NUMBER,
+            .value.as_number = left.value.as_number < right.value.as_number,
+        };
+
+    return (value_t) {
+        .type = VALUE_TYPE_NUMBER,
+        .value.as_number = 0,
+    };
+}
+
+value_t value_operation_greater_or_equals(const value_t left, const value_t right)
+{
+
+    if (left.type == VALUE_TYPE_NUMBER && right.type == VALUE_TYPE_NUMBER)
+        return (value_t) {
+            .type = VALUE_TYPE_NUMBER,
+            .value.as_number = left.value.as_number >= right.value.as_number,
+        };
+
+    return (value_t) {
+        .type = VALUE_TYPE_NUMBER,
+        .value.as_number = 0,
+    };
+}
+
+value_t value_operation_greater(const value_t left, const value_t right)
+{
+
+    if (left.type == VALUE_TYPE_NUMBER && right.type == VALUE_TYPE_NUMBER)
+        return (value_t) {
+            .type = VALUE_TYPE_NUMBER,
+            .value.as_number = left.value.as_number > right.value.as_number,
+        };
+
+    return (value_t) {
+        .type = VALUE_TYPE_NUMBER,
+        .value.as_number = 0,
+    };
+}

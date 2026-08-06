@@ -34,13 +34,15 @@ ast_node_t *parser_parse_if(parser_t *parser);
 
 ast_node_t *parser_parse_while(parser_t *parser);
 
-// у отца было три сына
+ast_node_t* parser_parse_statement(parser_t* parser);
 
-ast_node_t* parser_parse_expression(parser_t* parser); // старший вовсе был детина
+ast_node_t* parser_parse_comparison(parser_t* parser);
 
-ast_node_t* parser_parse_term(parser_t* parser); // средний был ни так ни сяк
+ast_node_t* parser_parse_expression(parser_t* parser);
 
-ast_node_t* parser_parse_factor(parser_t* parser); // младший был куколд сойджак
+ast_node_t* parser_parse_term(parser_t* parser);
+
+ast_node_t* parser_parse_factor(parser_t* parser);
 
 void parser_free(parser_t* parser);
 

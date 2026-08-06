@@ -34,6 +34,12 @@ value_t binary_op_node_evaluate(const binary_op_node_t* binary_op_node, context_
         case TOKEN_TYPE_MINUS: return value_operation_sub(left_value, right_value);
         case TOKEN_TYPE_ASTERISK: return value_operation_mul(left_value, right_value);
         case TOKEN_TYPE_SLASH: return value_operation_div(left_value, right_value);
+
+        case TOKEN_TYPE_EQUALS_EQUALS: return value_operation_equals(left_value, right_value);
+        case TOKEN_TYPE_LESS_EQUALS: return value_operation_less_or_equals(left_value, right_value);
+        case TOKEN_TYPE_LESS: return value_operation_less(left_value, right_value);
+        case TOKEN_TYPE_GREATER_EQUALS: return value_operation_greater_or_equals(left_value, right_value);
+        case TOKEN_TYPE_GREATER: return value_operation_greater(left_value, right_value);
         default:
             fprintf(stderr, "Unknown binary operator type %d\n", binary_op_node->operation.type);
             exit(EXIT_FAILURE);

@@ -33,6 +33,11 @@ bool lexer_can_advance(const lexer_t* lexer)
     return lexer->i < lexer->length;
 }
 
+char lexer_get_current_char(const lexer_t* lexer)
+{
+    return lexer->source[lexer->i];
+}
+
 token_t lexer_next_token(lexer_t* lexer)
 {
     if (!lexer_can_advance(lexer)) return (token_t){
@@ -40,36 +45,17 @@ token_t lexer_next_token(lexer_t* lexer)
         .type = TOKEN_TYPE_EOF,
     };
 
-    char current_char = lexer->source[lexer->i];
-    while (lexer_can_advance(lexer) && isspace(current_char = lexer->source[lexer->i])) lexer->i++;
+    while (lexer_can_advance(lexer) && isspace(lexer_get_current_char(lexer))) lexer->i++;
 
     if (!lexer_can_advance(lexer)) return (token_t){
         .value = nullptr,
         .type = TOKEN_TYPE_EOF
     };
 
-    if (isdigit(current_char) || current_char == '.') return lexer_next_number(lexer);
-    if (isalpha(current_char) || current_char == '_') return lexer_next_identifier(lexer);
-    if (current_char == '"') return lexer_next_string(lexer);
-    switch (current_char)
-    {
-        case '=': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_EQUALS };
-        case '+': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_PLUS };
-        case '-': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_MINUS };
-        case '*': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_ASTERISK };
-        case '/': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_SLASH };
-        case ',': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_COMMA };
-        case ';': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_SEMICOLON };
-        case '(': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LPAREN };
-        case ')': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_RPAREN };
-        case '{': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LBRACE };
-        case '}': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_RBRACE };
-        case '[': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_LBRACKET };
-        case ']': lexer_advance(lexer); return (token_t){ .value = nullptr, .type = TOKEN_TYPE_RBRACKET };
-        default:
-            fprintf(stderr, "Unknown character: '%c'\n", current_char);
-            exit(EXIT_FAILURE);
-    }
+    if (isdigit(lexer_get_current_char(lexer)) || lexer_get_current_char(lexer) == '.') return lexer_next_number(lexer);
+    if (isalpha(lexer_get_current_char(lexer)) || lexer_get_current_char(lexer) == '_') return lexer_next_identifier(lexer);
+    if (lexer_get_current_char(lexer) == '"') return lexer_next_string(lexer);
+    return lexer_next_operator(lexer);
 }
 
 token_t lexer_next_number(lexer_t* lexer)
@@ -77,9 +63,9 @@ token_t lexer_next_number(lexer_t* lexer)
     const unsigned long long begin = lexer->i;
     bool has_dot = false;
 
-    while (lexer_can_advance(lexer) && (isdigit(lexer->source[lexer->i]) || lexer->source[lexer->i] == '.'))
+    while (lexer_can_advance(lexer) && (isdigit(lexer_get_current_char(lexer)) || lexer_get_current_char(lexer) == '.'))
     {
-        if (lexer->source[lexer->i] == '.')
+        if (lexer_get_current_char(lexer) == '.')
         {
             if (has_dot)
             {
@@ -111,9 +97,9 @@ token_t lexer_next_identifier(lexer_t* lexer)
     const unsigned long long begin = lexer->i;
 
     while (lexer_can_advance(lexer) && (
-            isalnum(lexer->source[lexer->i]) ||
-            lexer->source[lexer->i] == '#' ||
-            lexer->source[lexer->i] == '_'
+            isalnum(lexer_get_current_char(lexer)) ||
+            lexer_get_current_char(lexer) == '#' ||
+            lexer_get_current_char(lexer) == '_'
             )) lexer_advance(lexer);
 
     return (token_t){
@@ -130,7 +116,7 @@ token_t lexer_next_string(lexer_t* lexer)
     lexer_advance(lexer);
     const unsigned long long begin = lexer->i;
 
-    while (lexer_can_advance(lexer) && lexer->source[lexer->i] != '"') lexer_advance(lexer);
+    while (lexer_can_advance(lexer) && lexer_get_current_char(lexer) != '"') lexer_advance(lexer);
 
     const unsigned long long length = lexer->i - begin;
 
@@ -143,6 +129,64 @@ token_t lexer_next_string(lexer_t* lexer)
         },
         .type = TOKEN_TYPE_STRING,
     };
+}
+
+token_t lexer_next_operator(lexer_t* lexer)
+{
+    const char current_char = lexer_get_current_char(lexer);
+    switch (current_char)
+    {
+        case ',': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from(","), .type = TOKEN_TYPE_COMMA };
+        case ';': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from(";"), .type = TOKEN_TYPE_SEMICOLON };
+        case '(': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("("), .type = TOKEN_TYPE_LPAREN };
+        case ')': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from(")"), .type = TOKEN_TYPE_RPAREN };
+        case '{': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("{"), .type = TOKEN_TYPE_LBRACE };
+        case '}': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("}"), .type = TOKEN_TYPE_RBRACE };
+        case '[': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("["), .type = TOKEN_TYPE_LBRACKET };
+        case ']': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("]"), .type = TOKEN_TYPE_RBRACKET };
+
+        case '=':
+            lexer_advance(lexer);
+            if (lexer_get_current_char(lexer) == '=')
+                return (token_t){
+                    .value.as_string = string_view_from("=="),
+                    .type = TOKEN_TYPE_EQUALS_EQUALS
+                };
+            return (token_t){
+                .value.as_string = string_view_from("="),
+                .type = TOKEN_TYPE_EQUALS
+            };
+        case '<':
+            lexer_advance(lexer);
+            if (lexer_get_current_char(lexer) == '=')
+                return (token_t){
+                    .value.as_string = string_view_from("<="),
+                    .type = TOKEN_TYPE_LESS_EQUALS
+                };
+            return (token_t){
+                .value.as_string = string_view_from("<"),
+                .type = TOKEN_TYPE_LESS
+            };
+        case '>':
+            lexer_advance(lexer);
+            if (lexer_get_current_char(lexer) == '=')
+                return (token_t){
+                    .value.as_string = string_view_from(">="),
+                    .type = TOKEN_TYPE_GREATER_EQUALS
+                };
+            return (token_t){
+                .value.as_string = string_view_from(">"),
+                .type = TOKEN_TYPE_GREATER
+            };
+
+        case '+': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("+"), .type = TOKEN_TYPE_PLUS };
+        case '-': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("-"), .type = TOKEN_TYPE_MINUS };
+        case '*': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("*"), .type = TOKEN_TYPE_ASTERISK };
+        case '/': lexer_advance(lexer); return (token_t){ .value.as_string = string_view_from("/"), .type = TOKEN_TYPE_SLASH };
+        default:
+            fprintf(stderr, "Unknown character: '%c'\n", current_char);
+            exit(EXIT_FAILURE);
+    }
 }
 
 void lexer_free(lexer_t* lexer)
