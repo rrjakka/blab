@@ -7,6 +7,7 @@ typedef enum
 {
     VALUE_TYPE_STRING,
     VALUE_TYPE_NUMBER,
+    VALUE_TYPE_BOOLEAN,
     // TODO: VALUE_TYPE_FUNCTION,
 } value_type_t;
 
@@ -14,6 +15,7 @@ typedef union
 {
     string_view_t as_string;
     long double as_number;
+    bool as_bool;
 } value_value_t;
 
 typedef struct
@@ -23,6 +25,8 @@ typedef struct
 } value_t;
 
 bool value_get_boolean(value_t value);
+
+void value_print(value_t value);
 
 value_t value_operation_add(value_t left, value_t right);
 

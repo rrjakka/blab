@@ -148,10 +148,13 @@ token_t lexer_next_operator(lexer_t* lexer)
         case '=':
             lexer_advance(lexer);
             if (lexer_get_current_char(lexer) == '=')
+            {
+                lexer_advance(lexer);
                 return (token_t){
                     .value.as_string = string_view_from("=="),
                     .type = TOKEN_TYPE_EQUALS_EQUALS
                 };
+            }
             return (token_t){
                 .value.as_string = string_view_from("="),
                 .type = TOKEN_TYPE_EQUALS
@@ -159,10 +162,13 @@ token_t lexer_next_operator(lexer_t* lexer)
         case '<':
             lexer_advance(lexer);
             if (lexer_get_current_char(lexer) == '=')
+            {
+                lexer_advance(lexer);
                 return (token_t){
                     .value.as_string = string_view_from("<="),
                     .type = TOKEN_TYPE_LESS_EQUALS
                 };
+            }
             return (token_t){
                 .value.as_string = string_view_from("<"),
                 .type = TOKEN_TYPE_LESS
@@ -170,10 +176,13 @@ token_t lexer_next_operator(lexer_t* lexer)
         case '>':
             lexer_advance(lexer);
             if (lexer_get_current_char(lexer) == '=')
+            {
+                lexer_advance(lexer);
                 return (token_t){
                     .value.as_string = string_view_from(">="),
                     .type = TOKEN_TYPE_GREATER_EQUALS
                 };
+            }
             return (token_t){
                 .value.as_string = string_view_from(">"),
                 .type = TOKEN_TYPE_GREATER

@@ -38,15 +38,7 @@ value_t function_call_node_evaluate(const function_call_node_t* function_call_no
     {
         for (i = 0; i < function_call_node->arguments->node.statement_sequence->statements_count; i++)
         {
-            switch (evaluated_values[i].type)
-            {
-                case VALUE_TYPE_NUMBER:
-                    printf("%Lf", evaluated_values[i].value.as_number);
-                    break;
-                case VALUE_TYPE_STRING:
-                    printf("%.*s", evaluated_values[i].value.as_string.length, evaluated_values[i].value.as_string.string);
-                    break;
-            }
+            value_print(evaluated_values[i]);
         }
         printf("\n");
     }

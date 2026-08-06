@@ -2,6 +2,7 @@
 #define PESEC_TOKEN_H
 
 #include "utils/string_view.h"
+#include <stdio.h>
 
 typedef enum
 {
@@ -49,5 +50,7 @@ typedef struct
     token_value_t value;
     token_type_t type;
 } token_t;
+
+void token_print(FILE* stream, token_t token);
 
 #endif // PESEC_TOKEN_H

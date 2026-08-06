@@ -23,7 +23,9 @@ token_t parser_eat(parser_t *parser, const token_type_t type)
 {
     if (!parser_match(parser, type))
     {
-        fprintf(stderr, "Unexpected token type %d\n", parser->current_token.type);
+        fprintf(stderr, "Unexpected token ");
+        token_print(stderr, parser->current_token);
+        fprintf(stderr, "\n");
         exit(EXIT_FAILURE);
     }
     const token_t prev_token = parser->current_token;
@@ -56,6 +58,9 @@ ast_node_t *parser_parse_statement_sequence(parser_t *parser, const bool between
 ast_node_t *parser_parse_identifier(parser_t *parser)
 {
     const string_view_t name = parser_eat(parser, TOKEN_TYPE_IDENTIFIER).value.as_string;
+
+    if (string_view_equals_cstr(name, "true")) return literal_node_new((value_t) { .type = VALUE_TYPE_BOOLEAN, .value.as_bool = true });
+    if (string_view_equals_cstr(name, "false")) return literal_node_new((value_t) { .type = VALUE_TYPE_BOOLEAN, .value.as_bool = false });
 
     if (string_view_equals_cstr(name, "mutab")) return parser_parse_variable_definition(parser);
     if (string_view_equals_cstr(name, "if")) return parser_parse_if(parser);
@@ -243,7 +248,9 @@ ast_node_t *parser_parse_factor(parser_t *parser)
 
     if (!node)
     {
-        fprintf(stderr, "Unexpected token type %d\n", parser->current_token.type);
+        fprintf(stderr, "Unexpected token ");
+        token_print(stderr, parser->current_token);
+        fprintf(stderr, "\n");
         exit(EXIT_FAILURE);
     }
 
