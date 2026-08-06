@@ -31,6 +31,7 @@ add_executable(
         src/value.c
         include/ast/variable_definition_node.h
         src/ast/variable_definition_node.c
+        src/ast/variable_assignment_node.c
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})

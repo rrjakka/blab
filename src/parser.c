@@ -54,6 +54,8 @@ ast_node_t* parser_parse_identifier(parser_t* parser)
 
     if (parser_match(parser, TOKEN_TYPE_LPAREN)) return parser_parse_function_call(parser, name);
 
+    if (parser_match(parser, TOKEN_TYPE_EQUALS)) return parser_parse_variable_assignment(parser, name);
+
     return parser_parse_variable(parser, name);
 }
 
@@ -80,6 +82,14 @@ ast_node_t *parser_parse_variable_definition(parser_t *parser)
     return variable_definition_node_new(name, value);
 }
 
+ast_node_t *parser_parse_variable_assignment(parser_t *parser, string_view_t name)
+{
+    parser_eat(parser, TOKEN_TYPE_EQUALS);
+    ast_node_t* value = parser_parse_expression(parser);
+
+    return variable_assignment_node_new(name, value);
+}
+
 ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t name)
 {
     parser_eat(parser, TOKEN_TYPE_LPAREN);
@@ -91,9 +101,9 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
     }
 
 
-    unsigned long long args_capacity = 256;
+    unsigned long long args_capacity = 2048;
     unsigned long long args_count = 0;
-    auto args = (ast_node_t**)calloc(args_capacity, sizeof(ast_node_t*)); // TODO: dynamically resize array
+    auto args = (ast_node_t**)calloc(args_capacity, sizeof(ast_node_t*));
 
     args[args_count] = parser_parse_expression(parser);
     ++args_count;
@@ -106,6 +116,7 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
         if (args_count >= args_capacity)
         {
             args_capacity *= 2;
+            auto _args = args; // cuz clang throw warning (Clang-Tidy: 'args' may be set to null if 'realloc' fails, which may result in a leak of the original buffer)
             args = (ast_node_t**)realloc(args, args_capacity * sizeof(ast_node_t*));
         }
     }
