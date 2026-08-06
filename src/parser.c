@@ -34,17 +34,14 @@ token_t parser_eat(parser_t* parser, const token_type_t type)
 
 ast_node_t* parser_parse(parser_t* parser)
 {
-    // TODO: replace it to linked list
-    const auto statements = (ast_node_t**)calloc(256, sizeof(ast_node_t*));
-    unsigned long long statements_count = 0;
-
+    ast_node_t* statement_sequence = statement_sequence_node_new();
     while (!parser_match(parser, TOKEN_TYPE_EOF))
     {
-        statements[statements_count++] = parser_parse_expression(parser);
+        statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
         parser_eat(parser, TOKEN_TYPE_SEMICOLON);
     }
 
-    return statement_sequence_node_new(statements, statements_count);
+    return statement_sequence;
 }
 
 ast_node_t* parser_parse_identifier(parser_t* parser)
@@ -99,35 +96,21 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
     if (parser_match(parser, TOKEN_TYPE_RPAREN))
     {
         parser_eat(parser, TOKEN_TYPE_RPAREN);
-        return function_call_node_new(name, nullptr, 0);
+        return function_call_node_new(name, nullptr);
     }
 
-
-    unsigned long long args_capacity = 2048;
-    unsigned long long args_count = 0;
-
-    // TODO: replace it to linked list
-    auto args = (ast_node_t**)calloc(args_capacity, sizeof(ast_node_t*));
-
-    args[args_count] = parser_parse_expression(parser);
-    ++args_count;
+    ast_node_t* statement_sequence = statement_sequence_node_new();
+    statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
 
     while (parser_match(parser, TOKEN_TYPE_COMMA))
     {
         parser_eat(parser, TOKEN_TYPE_COMMA);
-        args[args_count] = parser_parse_expression(parser);
-        ++args_count;
-        if (args_count >= args_capacity)
-        {
-            args_capacity *= 2;
-            auto _args = args; // cuz clang throw warning (Clang-Tidy: 'args' may be set to null if 'realloc' fails, which may result in a leak of the original buffer)
-            args = (ast_node_t**)realloc(args, args_capacity * sizeof(ast_node_t*));
-        }
+        statement_sequence_node_push(statement_sequence->node.statement_sequence, parser_parse_expression(parser));
     }
 
     parser_eat(parser, TOKEN_TYPE_RPAREN);
 
-    return function_call_node_new(name, args, args_count);
+    return function_call_node_new(name, statement_sequence);
 }
 
 ast_node_t* parser_parse_if(parser_t* parser)

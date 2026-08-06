@@ -10,11 +10,10 @@ typedef struct AST_NODE_STRUCT ast_node_t;
 typedef struct
 {
     string_view_t name;
-    ast_node_t **arguments;
-    unsigned long long arguments_count;
+    ast_node_t* arguments;
 } function_call_node_t;
 
-ast_node_t* function_call_node_new(string_view_t name, ast_node_t **arguments, unsigned long long arguments_count);
+ast_node_t* function_call_node_new(string_view_t name, ast_node_t* arguments);
 
 void function_call_node_free(function_call_node_t* function_call_node);
 

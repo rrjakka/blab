@@ -3,21 +3,55 @@
 #include "include/ast/ast_node.h"
 #include <stdlib.h>
 
-ast_node_t* statement_sequence_node_new(ast_node_t** statements, unsigned long long statements_count)
+ast_node_t* statement_sequence_node_new()
 {
     const auto node = (ast_node_t*)malloc(sizeof(ast_node_t));
     node->type = AST_NODE_STATEMENT_SEQUENCE;
     node->node.statement_sequence = (statement_sequence_node_t*)malloc(sizeof(statement_sequence_node_t));
-    node->node.statement_sequence->statements = statements;
-    node->node.statement_sequence->statements_count = statements_count;
+    node->node.statement_sequence->statements = nullptr;
+    node->node.statement_sequence->statements_count = 0;
+    node->node.statement_sequence->tail = nullptr;
     return node;
+}
+
+void statement_sequence_node_push(statement_sequence_node_t* statement_sequence_node, ast_node_t* statement)
+{
+    ++statement_sequence_node->statements_count;
+
+    const auto new_node = (statement_sequence_node_queue_t*)malloc(sizeof(statement_sequence_node_queue_t));
+
+    new_node->statement = statement;
+    new_node->next = nullptr;
+
+    if (statement_sequence_node->statements == nullptr)
+    {
+        statement_sequence_node->statements = new_node;
+        return;
+    }
+
+    statement_sequence_node_queue_t* current = statement_sequence_node->statements;
+
+    while (current->next)
+    {
+        current = current->next;
+    }
+
+    current->next = new_node;
 }
 
 void statement_sequence_node_free(statement_sequence_node_t* statement_sequence_node)
 {
-    for (int i = 0; i < statement_sequence_node->statements_count; i++)
+    statement_sequence_node_queue_t* current = statement_sequence_node->statements;
+
+    while (current)
     {
-        ast_node_free(statement_sequence_node->statements[i]);
+        statement_sequence_node_queue_t* next = current->next;
+
+        if (current->statement)
+            ast_node_free(current->statement);
+
+        free(current);
+        current = next;
     }
 
     free(statement_sequence_node);
@@ -25,15 +59,19 @@ void statement_sequence_node_free(statement_sequence_node_t* statement_sequence_
 
 value_t statement_sequence_node_evaluate(const statement_sequence_node_t* statement_sequence_node, context_t* context)
 {
-    auto result = (value_t){
-        .type = VALUE_TYPE_NUMBER,
-        .value = (value_value_t){
-            .as_number=0
-        }
-    };
+    value_t result;
+    result.type = VALUE_TYPE_NUMBER;
+    result.value.as_number = 0;
 
-    for (int i = 0; i < statement_sequence_node->statements_count; i++)
-        result = ast_node_evaluate(statement_sequence_node->statements[i], context);
+    const statement_sequence_node_queue_t* current = statement_sequence_node->statements;
+
+    while (current)
+    {
+        if (current->statement)
+            result = ast_node_evaluate(current->statement, context);
+
+        current = current->next;
+    }
 
     return result;
 }

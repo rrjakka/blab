@@ -1,6 +1,10 @@
-mutab a = 12;
+mutab a = 0;
 
-if (0)
+if (mutab b = 0)
     println("DICK")
+else if (a)
+    println("FUCK")
 else
-    println("FUCK");
+    println("PENIS");
+
+println(a, " ", b);

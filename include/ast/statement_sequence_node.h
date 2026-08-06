@@ -5,14 +5,23 @@
 #include "include/context.h"
 
 typedef struct AST_NODE_STRUCT ast_node_t;
+typedef struct STATEMENT_SEQUENCE_NODE_QUEUE_STRUCT statement_sequence_node_queue_t;
+
+typedef struct STATEMENT_SEQUENCE_NODE_QUEUE_STRUCT
+{
+    ast_node_t* statement;
+    statement_sequence_node_queue_t* next;
+} statement_sequence_node_queue_t;
 
 typedef struct
 {
-    ast_node_t** statements;
     unsigned long long statements_count;
+    statement_sequence_node_queue_t* statements;
 } statement_sequence_node_t;
 
-ast_node_t* statement_sequence_node_new(ast_node_t** statements, unsigned long long statements_count);
+ast_node_t* statement_sequence_node_new();
+
+void statement_sequence_node_push(statement_sequence_node_t* statement_sequence_node, ast_node_t* statement);
 
 void statement_sequence_node_free(statement_sequence_node_t* statement_sequence_node);
 

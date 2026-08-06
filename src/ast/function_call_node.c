@@ -4,38 +4,39 @@
 
 #include "include/ast/ast_node.h"
 #include <stdlib.h>
-#include <string.h>
 
 
-ast_node_t* function_call_node_new(const string_view_t name, ast_node_t **arguments, const unsigned long long arguments_count)
+ast_node_t* function_call_node_new(const string_view_t name, ast_node_t* arguments)
 {
     const auto node = (ast_node_t*)malloc(sizeof(ast_node_t));
     node->type = AST_NODE_FUNCTION_CALL;
     node->node.function_call = (function_call_node_t*)malloc(sizeof(function_call_node_t));
     node->node.function_call->name = name;
     node->node.function_call->arguments = arguments;
-    node->node.function_call->arguments_count = arguments_count;
     return node;
 }
 
 void function_call_node_free(function_call_node_t* function_call_node)
 {
-    for (int i = 0; i < function_call_node->arguments_count; i++)
-        ast_node_free(function_call_node->arguments[i]);
-
+    ast_node_free(function_call_node->arguments);
     free(function_call_node);
 }
 
 value_t function_call_node_evaluate(const function_call_node_t* function_call_node, context_t* context)
 {
-    const auto evaluated_values = (value_t*)calloc(function_call_node->arguments_count, sizeof(value_t));
+    const statement_sequence_node_queue_t* current = function_call_node->arguments->node.statement_sequence->statements;
+    const auto evaluated_values = (value_t*)calloc(function_call_node->arguments->node.statement_sequence->statements_count, sizeof(value_t));
 
-    for (int i = 0; i < function_call_node->arguments_count; i++)
-        evaluated_values[i] = ast_node_evaluate(function_call_node->arguments[i], context);
+    unsigned long long i = 0;
+    while (current)
+    {
+        evaluated_values[i++] = ast_node_evaluate(current->statement, context);
+        current = current->next;
+    }
 
     if (string_view_equals_cstr(function_call_node->name, "println"))
     {
-        for (int i = 0; i < function_call_node->arguments_count; i++)
+        for (i = 0; i < function_call_node->arguments->node.statement_sequence->statements_count; i++)
         {
             switch (evaluated_values[i].type)
             {
@@ -49,6 +50,8 @@ value_t function_call_node_evaluate(const function_call_node_t* function_call_no
         }
         printf("\n");
     }
+
+    free(evaluated_values);
 
     return (value_t) {
         .type = VALUE_TYPE_NUMBER,
