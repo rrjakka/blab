@@ -34,6 +34,7 @@ token_t parser_eat(parser_t* parser, const token_type_t type)
 
 ast_node_t* parser_parse(parser_t* parser)
 {
+    // TODO: replace it to linked list
     const auto statements = (ast_node_t**)calloc(256, sizeof(ast_node_t*));
     unsigned long long statements_count = 0;
 
@@ -51,6 +52,7 @@ ast_node_t* parser_parse_identifier(parser_t* parser)
     const string_view_t name = parser_eat(parser, TOKEN_TYPE_IDENTIFIER).value.as_string;
 
     if (string_view_equals_cstr(name, "mutab")) return parser_parse_variable_definition(parser);
+    if (string_view_equals_cstr(name, "if")) return parser_parse_if(parser);
 
     if (parser_match(parser, TOKEN_TYPE_LPAREN)) return parser_parse_function_call(parser, name);
 
@@ -103,6 +105,8 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
 
     unsigned long long args_capacity = 2048;
     unsigned long long args_count = 0;
+
+    // TODO: replace it to linked list
     auto args = (ast_node_t**)calloc(args_capacity, sizeof(ast_node_t*));
 
     args[args_count] = parser_parse_expression(parser);
@@ -124,6 +128,23 @@ ast_node_t *parser_parse_function_call(parser_t *parser, const string_view_t nam
     parser_eat(parser, TOKEN_TYPE_RPAREN);
 
     return function_call_node_new(name, args, args_count);
+}
+
+ast_node_t* parser_parse_if(parser_t* parser)
+{
+    ast_node_t* condition = parser_parse_expression(parser);
+
+    ast_node_t* if_body = parser_parse_expression(parser);
+    ast_node_t* else_body = nullptr;
+
+    if (parser_match(parser, TOKEN_TYPE_IDENTIFIER) &&
+        string_view_equals_cstr(parser->current_token.value.as_string, "else"))
+    {
+        parser_eat(parser, TOKEN_TYPE_IDENTIFIER);
+        else_body = parser_parse_expression(parser);
+    }
+
+    return condition_node_new(condition, if_body, else_body);
 }
 
 ast_node_t* parser_parse_expression(parser_t* parser)

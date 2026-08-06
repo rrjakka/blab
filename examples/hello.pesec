@@ -1,4 +1,6 @@
 mutab a = 12;
-println(a);
-a = a + 120;
-println(a);
+
+if (0)
+    println("DICK")
+else
+    println("FUCK");

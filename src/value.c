@@ -3,6 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+bool value_get_boolean(const value_t value)
+{
+    switch (value.type)
+    {
+        case VALUE_TYPE_NUMBER: return value.value.as_number != 0;
+        case VALUE_TYPE_STRING: return value.value.as_string.length != 0;
+    }
+
+    fprintf(stderr, "Value type '%d' is not a valid value type\n", value.type);
+    exit(EXIT_FAILURE);
+}
 
 value_t value_operation_add(const value_t left, const value_t right)
 {

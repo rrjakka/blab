@@ -14,6 +14,7 @@ value_t ast_node_evaluate(const ast_node_t* node, context_t* context)
         case AST_NODE_VARIABLE_ASSIGNMENT: return variable_assignment_node_evaluate(node->node.variable_assignment, context);
         case AST_NODE_FUNCTION_CALL: return function_call_node_evaluate(node->node.function_call, context);
         case AST_NODE_STATEMENT_SEQUENCE: return statement_sequence_node_evaluate(node->node.statement_sequence, context);
+        case AST_NODE_CONDITION: return condition_node_evaluate(node->node.condition, context);
     }
 
     fprintf(stderr, "Unknown node type: %d\n", node->type);
@@ -41,6 +42,9 @@ void ast_node_free(ast_node_t* node)
             break;
         case AST_NODE_STATEMENT_SEQUENCE:
             statement_sequence_node_free(node->node.statement_sequence);
+            break;
+        case AST_NODE_CONDITION:
+            condition_node_free(node->node.condition);
             break;
         case AST_NODE_LITERAL:
             break;

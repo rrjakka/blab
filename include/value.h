@@ -22,6 +22,8 @@ typedef struct
     value_value_t value;
 } value_t;
 
+bool value_get_boolean(value_t value);
+
 value_t value_operation_add(value_t left, value_t right);
 
 value_t value_operation_sub(value_t left, value_t right);
